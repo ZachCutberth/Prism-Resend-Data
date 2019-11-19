@@ -1,0 +1,1 @@
+pyinstaller --onefile -w --version-file=version.txt --icon=prism.ico --add-data "prism.ico;." --add-data "mysql.exe;." PrismResendData.py
