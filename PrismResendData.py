@@ -18,6 +18,9 @@ Version: {version}
 Retail Pro International
 
 Supports Prism 1.11.*, 1.12.*, 1.13.*, 1.14.*
+
+Resending Data to MySQL Requires: 
+- Microsoft Visual C++ 2013 Redistributable (x64)
 '''
 
 def resource_path(relative_path):
@@ -442,7 +445,8 @@ menu_layout = [
 
 # layout
 if dbtype == 'Oracle':
-    layout = [ [sg.Text('Database'), sg.Radio('Oracle', 'RADIO1', key='oracle', default=True, disabled=False, enable_events=True), sg.Radio('MySQL', 'RADIO1', key='mysql', disabled=False, enable_events=True)],
+    layout = [ [sg.Menu(menu_layout)],
+            [sg.Text('Database'), sg.Radio('Oracle', 'RADIO1', key='oracle', default=True, disabled=False, enable_events=True), sg.Radio('MySQL', 'RADIO1', key='mysql', disabled=False, enable_events=True)],
             [sg.Text('Server Hostname'), sg.Input(size=(50,1), key='server_name', do_not_clear=True, default_text='localhost', disabled=True)],  
             [sg.Text('Resource'), sg.InputCombo(['Document', 'Inventory', 'Customer', 'Vendor', 'Receiving', 'Transferslip', 'Zoutcontrol', 'Drawerevent'],enable_events=True, readonly=True, key='resource')],
             [sg.Text('Filter By'), sg.Radio('Date Range', 'RADIO2', default=True, key='date', enable_events=True) ,sg.Radio('Date Range + Store Code', 'RADIO2', default=False, key='date_store', enable_events=True), sg.Radio('SID', 'RADIO2', key='sid', enable_events=True), sg.Radio('Doc Number', 'RADIO2', key='docnum', enable_events=True)],
@@ -463,7 +467,8 @@ elif dbtype == 'MySQL':
             ]
 
 else:
-    layout = [ [sg.Text('Database'), sg.Radio('Oracle', 'RADIO1', key='oracle', disabled=False, enable_events=True), sg.Radio('MySQL', 'RADIO1', key='mysql', disabled=False, default=True, enable_events=True)],
+    layout = [ [sg.Menu(menu_layout)],
+            [sg.Text('Database'), sg.Radio('Oracle', 'RADIO1', key='oracle', disabled=False, enable_events=True), sg.Radio('MySQL', 'RADIO1', key='mysql', disabled=False, default=True, enable_events=True)],
             [sg.Text('Server Hostname'), sg.Input(size=(50,1), key='server_name', do_not_clear=True, default_text='localhost')], 
             [sg.Text('Resource'), sg.InputCombo(['Document', 'Inventory', 'Customer', 'Vendor', 'Receiving', 'Transferslip', 'Zoutcontrol', 'Drawerevent'],enable_events=True, readonly=True, key='resource')],
             [sg.Text('Filter By'), sg.Radio('Date Range', 'RADIO2', default=True, key='date', enable_events=True) ,sg.Radio('Date Range + Store Code', 'RADIO2', default=False, key='date_store', enable_events=True), sg.Radio('SID', 'RADIO2', key='sid', enable_events=True), sg.Radio('Doc Number', 'RADIO2', key='docnum', enable_events=True)],
