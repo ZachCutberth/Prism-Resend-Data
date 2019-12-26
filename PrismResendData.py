@@ -9,19 +9,40 @@ import os
 import winreg
 from subprocess import Popen, PIPE
 import config
+import logging
+import time
 
-version = '1.1'
+version = '1.2'
 
 about_text = f'''
 Prism Resend Tool
 Version: {version}
 Retail Pro International
 
-Supports Prism 1.11.*, 1.12.*, 1.13.*, 1.14.*
+Compatible with Prism 1.11.*, 1.12.*, 1.13.*, 1.14.*
 
 Resending Data to MySQL Requires: 
 - Microsoft Visual C++ 2013 Redistributable (x64)
 '''
+
+# Check if directories exits. If not make dir.
+if not os.path.exists('LOGS'):
+    os.mkdir('LOGS')
+
+# Configure timestamp for file names.
+timestamp = time.strftime('%Y-%m-%d_%H-%M-%S')
+
+# Configure logging
+logging.basicConfig( 
+    level=logging.DEBUG, format='%(asctime)s.%(msecs)03d [%(levelname)s] %(message)s', 
+    datefmt='%Y-%m-%d %H:%M:%S',
+    handlers=[
+        logging.FileHandler('LOGS\\PrismResendData_' + timestamp + '.log'),
+        logging.StreamHandler()
+    ])
+
+logging.info(f"System Name: {os.environ['COMPUTERNAME']}")
+logging.info(f'Prism Price Update Tool Version: {version}')
 
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
@@ -535,36 +556,66 @@ while True:
         filter_sid = values['sid']
         filter_docnum = values['docnum']
         server_name = values['server_name']
+
+        logging.info(f'Resending Data')
+        logging.info(f'Server Name: {server_name}')
+        logging.info(f'Resource Type: {resource_type}')
+
         if db_oracle == True:
+            logging.info(f'DB Type: Oracle')
             if filter_date == True:
+                logging.info(f'Filter Type: Date')
                 from_date = values['FromDate']
                 to_date = values['ToDate']
+                logging.info(f'From Date: {from_date}')
+                logging.info(f'To Date: {to_date}')
                 resend_oracle(resource_type, 'date', from_date, to_date)
             if date_store_filter == True:
+                logging.info(f'Filter Type: Date and Store Code')
                 from_date = values['FromDate']
                 to_date = values['ToDate']
                 store_list = values['list']
+                logging.info(f'From Date: {from_date}')
+                logging.info(f'To Date: {to_date}')
+                logging.info(f'Store Code List: {store_list}')
                 resend_oracle(resource_type, 'date_store', from_date, to_date, store_list=store_list)
             if filter_sid == True:
+                logging.info(f'Filter Type: SID List')
                 sid_list = values['list']
+                logging.info(f'SID List: {sid_list}')
                 resend_oracle(resource_type, 'sid','2018-01-01','2018-01-01', sid_list)
             if filter_docnum == True:
+                logging.info(f'Filter Type: Doc Number')
                 docnum_list = values['list']
+                logging.info(f'Doc Number List: {docnum_list}')
                 resend_oracle(resource_type, 'docnum', '2018-01-01','2018-01-01', docnum_list=docnum_list)
         if db_oracle == False:
+            logging.info(f'DB Type: MySQL')
             if filter_date == True:
+                logging.info(f'Filter Type: Date')
                 from_date = values['FromDate']
                 to_date = values['ToDate']
+                logging.info(f'From Date: {from_date}')
+                logging.info(f'To Date: {to_date}')
                 resend_mysql(resource_type, 'date', from_date, to_date, server_name=server_name)
             if date_store_filter == True:
+                logging.info(f'Filter Type: Date and Store Code')
                 from_date = values['FromDate']
                 to_date = values['ToDate']
                 store_list = values['list']
+                logging.info(f'From Date: {from_date}')
+                logging.info(f'To Date: {to_date}')
+                logging.info(f'Store Code List: {store_list}')
                 resend_mysql(resource_type, 'date_store', from_date, to_date, store_list=store_list, server_name=server_name)
             if filter_sid == True:
+                logging.info(f'Filter Type: SID List')
                 sid_list = values['list']
+                logging.info(f'SID List: {sid_list}')
                 resend_mysql(resource_type, 'sid','2018-01-01','2018-01-01', sid_list, server_name=server_name)
             if filter_docnum == True:
+                logging.info(f'Filter Type: Doc Number')
                 docnum_list = values['list']
+                logging.info(f'Doc Number List: {docnum_list}')
                 resend_mysql(resource_type, 'docnum', '2018-01-01','2018-01-01', docnum_list=docnum_list, server_name=server_name)
+        logging.info(f'Resending Data Complete')
         sg.Popup('Attempt to resend data complete.')
